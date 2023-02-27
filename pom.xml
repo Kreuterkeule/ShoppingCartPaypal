@@ -15,7 +15,6 @@
 	<packaging>war</packaging>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<name>ShoppingCartPaypal</name>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
