@@ -4,11 +4,16 @@ import com.kreuterkeule.ShoppingCartPaypal.entity.Product;
 import com.kreuterkeule.ShoppingCartPaypal.entity.ShoppingCart;
 import com.kreuterkeule.ShoppingCartPaypal.repository.ProductRepo;
 import com.kreuterkeule.ShoppingCartPaypal.service.IdService;
+import com.kreuterkeule.ShoppingCartPaypal.service.PaypalPayService;
 import com.kreuterkeule.ShoppingCartPaypal.service.ShoppingCartService;
+import com.paypal.api.payments.Links;
+import com.paypal.api.payments.Payment;
+import com.paypal.base.rest.PayPalRESTException;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,22 +21,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
 public class WebController {
 
+    private static final String SUCCESS_URL = "paypal/success";
+
+    private static final String CANCEL_URL = "paypal/cancel";
+
+    @Value("${server.port}")
+    private String serverPort;
+
     private IdService idService;
     private ShoppingCartService cartService;
     private ProductRepo productRepo;
+    private PaypalPayService paypalService;
+    private ServletContext servletContext;
 
     @Autowired
-    public WebController(IdService idService, ShoppingCartService cartService, ProductRepo productRepo) {
+    public WebController(IdService idService, ShoppingCartService cartService, ProductRepo productRepo, PaypalPayService paypalService, ServletContext servletContext) {
         this.idService = idService;
         this.cartService = cartService;
         this.productRepo = productRepo;
+        this.paypalService = paypalService;
+        this.servletContext = servletContext;
     }
 
     @GetMapping("/")
@@ -109,4 +124,34 @@ public class WebController {
         return "redirect:/";
     }
 
+    @PostMapping("api/buy")
+    public String checkout(HttpServletRequest request) throws PayPalRESTException {
+
+        Payment payment = paypalService.generatePayment(
+                Double.valueOf(cartService.getValue((Integer) request.getSession().getAttribute("shoppingCartId"))),
+                "USD",
+                "paypal",
+                "sale",
+                "buy from great thymes store",
+                "http://localhost:" + serverPort + servletContext.getContextPath() + "/" + CANCEL_URL,
+                "http://localhost:" + serverPort + servletContext.getContextPath() + "/" + SUCCESS_URL
+        );
+
+        for (Links link : payment.getLinks()) {
+            if (link.getRel().equals("approval_url")) {
+                return "redirect:" +  link.getHref();
+            }
+        }
+
+        return "redirect:/";
+    }
+    @GetMapping("paypal/success")
+    public String getSuccessUrl() {
+        return "success";
+    }
+
+    @GetMapping("paypal/cancel")
+    public String getCancelUrl() {
+        return "cancel";
+    }
 }

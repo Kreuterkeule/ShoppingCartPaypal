@@ -2,7 +2,16 @@ package com.kreuterkeule.ShoppingCartPaypal.controller;
 
 import com.kreuterkeule.ShoppingCartPaypal.entity.Product;
 import com.kreuterkeule.ShoppingCartPaypal.repository.ProductRepo;
+import com.kreuterkeule.ShoppingCartPaypal.service.PaypalPayService;
+import com.kreuterkeule.ShoppingCartPaypal.service.ShoppingCartService;
+import com.paypal.api.payments.Links;
+import com.paypal.api.payments.Payment;
+import com.paypal.base.rest.PayPalRESTException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +22,7 @@ import java.util.List;
 public class ApiController {
 
     private ProductRepo productRepo;
+
 
     @Autowired
     public ApiController(ProductRepo productRepo) {
@@ -48,4 +58,5 @@ public class ApiController {
 
         return ResponseEntity.ok(productRepo.save(oldProduct));
     }
+
 }
