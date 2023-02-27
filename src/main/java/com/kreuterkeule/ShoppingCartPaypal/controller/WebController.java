@@ -146,7 +146,13 @@ public class WebController {
         return "redirect:/";
     }
     @GetMapping("paypal/success")
-    public String getSuccessUrl() {
+    public String getSuccessUrl(HttpServletRequest request) {
+        /*TODO: create capture payment method in paypal service and store payment in paypalorder database
+        * TODO: make a panel to see all orders
+        *
+        */
+
+        request.getSession().invalidate();
         return "success";
     }
 

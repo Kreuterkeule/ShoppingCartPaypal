@@ -6,12 +6,14 @@
 </head>
 <body>
     <div class="marked">
-        <ul>
-            <li th:each="product : ${available_products}">
-                <a th:href="@{addToCart(productId=${product.getId()})}"><span th:text="${product.getName()}"></span> <span th:text="${product.getPrice()}"></span></a>
-                <a th:href="@{removeFromCart(productId=${product.getId()})}">remove</a>
-            </li>
-        </ul>
+        <table>
+            <tr th:each="product : ${available_products}">
+                <td th:text="${product.getName()}"></td>
+                <td th:text="${#numbers.formatCurrency(product.getPrice)}"></td>
+                <td><a th:href="@{addToCart(productId=${product.getId()})}">add</a></td>
+                <td><a th:href="@{removeFromCart(productId=${product.getId()})}">remove</a></td>
+            </tr>
+        </table>
     </div>
     <div class="cart">
         <ul>
