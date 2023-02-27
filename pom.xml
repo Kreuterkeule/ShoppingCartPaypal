@@ -12,8 +12,10 @@
 	<artifactId>ShoppingCartPaypal</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ShoppingCartPaypal</name>
+	<packaging>war</packaging>
 	<description>Demo project for Spring Boot</description>
 	<properties>
+		<name>ShoppingCartPaypal</name>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
@@ -52,6 +54,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<finalName>${name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
