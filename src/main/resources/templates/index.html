@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Boot Session Example</title>
+</head>
+<body>
+    <div class="marked">
+        <ul>
+            <li th:each="product : ${available_products}">
+                <a th:href="@{addToCart(productId=${product.getId()})}"><span th:text="${product.getName()}"></span> <span th:text="${product.getPrice()}"></span></a>
+                <a th:href="@{removeFromCart(productId=${product.getId()})}">remove</a>
+            </li>
+        </ul>
+    </div>
+    <div class="cart">
+        <ul>
+            <li th:each="element : ${cart}">
+                <span th:text="${element.value}"></span>x <span th:text="${element.key}"></span>
+            </li>
+        </ul>
+    </div>
+    <div class="cartValue"><ul>
+        <li>
+            $<span th:text="${cart_value}"></span><span> USD</span>
+        </li>
+    </ul>
+    </div>
+    <form action="/api/buy" method="post">
+        <input type="submit" name="buy" value="buy" />
+    </form>
+    <form action="/destroy" method="post">
+        <input type="submit" name="clear_cart" value="clear_cart" />
+    </form>
+
+</body>
+</html>
