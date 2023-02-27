@@ -8,6 +8,7 @@ import com.kreuterkeule.ShoppingCartPaypal.service.PaypalPayService;
 import com.kreuterkeule.ShoppingCartPaypal.service.ShoppingCartService;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
+import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,9 +21,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 @Controller
 public class WebController {
@@ -39,14 +45,15 @@ public class WebController {
     private ProductRepo productRepo;
     private PaypalPayService paypalService;
     private ServletContext servletContext;
-
+    private APIContext apiContext;
     @Autowired
-    public WebController(IdService idService, ShoppingCartService cartService, ProductRepo productRepo, PaypalPayService paypalService, ServletContext servletContext) {
+    public WebController(IdService idService, ShoppingCartService cartService, ProductRepo productRepo, PaypalPayService paypalService, ServletContext servletContext, APIContext apiContext) {
         this.idService = idService;
         this.cartService = cartService;
         this.productRepo = productRepo;
         this.paypalService = paypalService;
         this.servletContext = servletContext;
+        this.apiContext = apiContext;
     }
 
     @GetMapping("/")
@@ -125,7 +132,7 @@ public class WebController {
     }
 
     @PostMapping("api/buy")
-    public String checkout(HttpServletRequest request) throws PayPalRESTException {
+    public String checkout(HttpServletRequest request) throws PayPalRESTException, IOException {
 
         Payment payment = paypalService.generatePayment(
                 Double.valueOf(cartService.getValue((Integer) request.getSession().getAttribute("shoppingCartId"))),
@@ -146,13 +153,12 @@ public class WebController {
         return "redirect:/";
     }
     @GetMapping("paypal/success")
-    public String getSuccessUrl(HttpServletRequest request) {
-        /*TODO: create capture payment method in paypal service and store payment in paypalorder database
-        * TODO: make a panel to see all orders
-        *
-        */
+    public String getSuccessUrl(
+            @RequestParam("paymentId") String paymentId,
+            @RequestParam("token") String token,
+            @RequestParam("PayerID") String payerId,
+            HttpServletRequest request) {
 
-        request.getSession().invalidate();
         return "success";
     }
 
