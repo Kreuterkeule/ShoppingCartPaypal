@@ -6,7 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-
+// not jet needed, but will be needed, when orders will be captured and admins can see which orders are to be delivered.
 @Table(name = "paypalorder")
 @Data
 @Entity

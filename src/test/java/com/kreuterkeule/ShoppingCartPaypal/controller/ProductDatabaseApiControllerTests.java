@@ -15,8 +15,15 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ *
+ * This test also tests the productRepo and its service, so I did not make special tests for them!
+ *
+ */
+
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProductDatabaseApiControllerTests {
+class ProductDatabaseApiControllerTests {
 
     @Autowired
     private TestRestTemplate restTemplate;
