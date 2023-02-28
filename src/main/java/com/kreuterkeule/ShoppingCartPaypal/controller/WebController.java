@@ -22,13 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 @Controller
 public class WebController {
@@ -134,12 +130,20 @@ public class WebController {
     @PostMapping("api/buy")
     public String checkout(HttpServletRequest request) throws PayPalRESTException, IOException {
 
+        Integer cartId = (Integer) request.getSession().getAttribute("shoppingCartId");
+
+        String description = "";
+
+        for ( Map.Entry<String, Integer> productAndCount : cartService.getCart(cartId).getProductsAndTheirCount().entrySet()) {
+            description += String.valueOf(productAndCount.getValue()) + "x " + productAndCount.getKey() + "\n";
+        }
+
         Payment payment = paypalService.generatePayment(
-                Double.valueOf(cartService.getValue((Integer) request.getSession().getAttribute("shoppingCartId"))),
+                cartService.getValue(cartId),
                 "USD",
                 "paypal",
                 "sale",
-                "buy from great thymes store",
+                description,
                 "http://localhost:" + serverPort + servletContext.getContextPath() + "/" + CANCEL_URL,
                 "http://localhost:" + serverPort + servletContext.getContextPath() + "/" + SUCCESS_URL
         );
