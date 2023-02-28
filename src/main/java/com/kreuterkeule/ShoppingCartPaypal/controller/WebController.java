@@ -161,7 +161,13 @@ public class WebController {
             @RequestParam("paymentId") String paymentId,
             @RequestParam("token") String token,
             @RequestParam("PayerID") String payerId,
-            HttpServletRequest request) {
+            HttpServletRequest request) throws PayPalRESTException, IOException {
+
+        Payment payment = paypalService.executePayment(paymentId, payerId);
+
+        System.out.println("payment '" + paymentId + "' executed, State of payment: " + payment.getState() + ", Cart: " + payment.getCart());
+
+        paypalService.capturePayment(payment.getId());
 
         return "success";
     }
