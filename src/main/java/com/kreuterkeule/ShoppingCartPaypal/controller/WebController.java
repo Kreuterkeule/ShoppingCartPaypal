@@ -63,7 +63,7 @@ public class WebController {
         if (cartId == null) {
             cartId = idService.getNewId();
             session.setAttribute("shoppingCartId", cartId);
-            cart = new ShoppingCart(new ArrayList<>());
+            cart = new ShoppingCart(new ArrayList<Product>());
             cartService.addCart(cartId, cart);
             System.out.println("session with id '" + session.getAttribute("shoppingCartId") + "' was created");
         } else {

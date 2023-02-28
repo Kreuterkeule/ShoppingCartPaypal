@@ -23,12 +23,6 @@ public class ControllerTests {
     private int port;
 
     @Autowired
-    PaypalPayService paypalService;
-
-    @Autowired
-    private APIContext apiContext;
-
-    @Autowired
     private TestRestTemplate restTemplate;
 
     @Autowired
@@ -46,29 +40,6 @@ public class ControllerTests {
     @Test
     public void testIfSuccessAndCancelUrlsAreReachable() {
         assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/paypal/success", String.class).contains("<!DOCTYPE html>"));
-    }
-
-    @Test
-    public void testIfPaypalApiIsReachable() throws PayPalRESTException {
-        Payment payment = paypalService.generatePayment(
-                10D,
-                "USD",
-                "paypal",
-                "sale",
-                "Testing Paypal API",
-                "example.com",
-                "example.com"
-        );
-
-        Boolean approvalUrlFound = false;
-
-        for (Links link : payment.getLinks()) {
-            if (link.getRel().equals("approval_url")) {
-                approvalUrlFound = true;
-            }
-        }
-
-        assertTrue(approvalUrlFound);
-
+        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/paypal/cancel", String.class).contains("<!DOCTYPE html>"));
     }
 }

@@ -12,8 +12,6 @@ import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +38,7 @@ public class PaypalPayService {
 
         // make every number into a number with two floating point numbers
         // example: 2.2 => 2.20; 30.537 => 30.54
+        // why? this is required from PayPal REST api, otherwise you would get a VALIDATION_ERROR
         total = new BigDecimal(total).setScale(2, RoundingMode.CEILING).doubleValue();
 
         amount.setTotal(total.toString());
@@ -96,7 +95,7 @@ public class PaypalPayService {
 
         httpConn.setDoOutput(true);
         OutputStreamWriter writer = new OutputStreamWriter(httpConn.getOutputStream());
-        //not needed and making errors
+        //not needed and producing errors
         //writer.write("");
         //writer.flush();
         //writer.close();
