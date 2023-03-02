@@ -138,6 +138,8 @@ public class WebController {
             description += String.valueOf(productAndCount.getValue()) + "x " + productAndCount.getKey() + "\n";
         }
 
+        System.out.println(description);
+
         Payment payment = paypalService.generatePayment(
                 cartService.getValue(cartId),
                 "USD",

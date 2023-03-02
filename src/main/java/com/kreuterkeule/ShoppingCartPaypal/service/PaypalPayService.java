@@ -41,6 +41,8 @@ public class PaypalPayService {
         // why? this is required from PayPal REST api, otherwise you would get a VALIDATION_ERROR
         total = new BigDecimal(total).setScale(2, RoundingMode.CEILING).doubleValue();
 
+        System.out.println(total.toString());
+
         amount.setTotal(total.toString());
 
         Transaction transaction = new Transaction();
